@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import './TabPages/friends.dart';
 
 class HomePage extends StatefulWidget {
+  final String uId;
+  HomePage({this.uId});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -56,7 +59,6 @@ class _HomePageState extends State<HomePage>
             )
           ],
         ),
-        
       ),
       appBar: AppBar(
         title: Text(
@@ -97,7 +99,9 @@ class _HomePageState extends State<HomePage>
       body: TabBarView(
         controller: _tabCont,
         children: <Widget>[
-          Text('Woooo'),
+          FriendsTab(
+            userId: widget.uId,
+          ),
           Text('Woooo'),
           Text('Woooo'),
         ],

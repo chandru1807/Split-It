@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:splitwise_clone/home_page.dart';
 
 class SignInForm extends StatefulWidget {
   @override
@@ -11,44 +13,98 @@ class SignInForm extends StatefulWidget {
 // the form.
 class SignInFormState extends State<SignInForm> {
   bool _showPassword = false;
+  String _email;
+  String _password;
   GlobalKey<FormState> _signInKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _signInKey,
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          height: 200.0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              usernameAndPassword(
-                  'Enter username', 'Username', false, 'Enter valid username'),
-              usernameAndPassword('Enter password', 'Password', !_showPassword,
-                  'Enter valid password'),
-              RaisedButton(
-                animationDuration: Duration(milliseconds: 300),
-                highlightColor: Colors.white,
-                splashColor: Colors.white,
-                onPressed: () {
-                  if (_signInKey.currentState.validate()) {
-                    // If the form is valid, we want to show a Snackbar
-                    Navigator.pushNamed(context, '/homePage');
-                  }
-                },
-                elevation: 2.0,
-                color: Colors.black87,
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                    color: Colors.white,
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              height: 200.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  usernameAndPassword(
+                      'Enter email', 'Email Id', false, 'Enter valid Email'),
+                  usernameAndPassword('Enter password', 'Password',
+                      !_showPassword, 'Enter valid password'),
+                  RaisedButton(
+                    animationDuration: Duration(milliseconds: 300),
+                    highlightColor: Colors.white,
+                    splashColor: Colors.white,
+                    onPressed: () {
+                      if (_signInKey.currentState.validate()) {
+                        FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                          email: _email,
+                          password: _password,
+                        )
+                            .then((FirebaseUser value) {
+                          print(value);
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                            HomePage(
+                              uId: value.uid,
+                            );
+                          }));
+                        }).catchError((e) => print(e));
+                      }
+                    },
+                    elevation: 2.0,
+                    color: Colors.black87,
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 20.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Don't have an account?",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  RaisedButton(
+                    animationDuration: Duration(milliseconds: 300),
+                    highlightColor: Colors.white,
+                    splashColor: Colors.white,
+                    elevation: 2.0,
+                    color: Colors.black87,
+                    child: Text(
+                      'Signup',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/signUp');
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -98,6 +154,14 @@ class SignInFormState extends State<SignInForm> {
         validator: (String value) {
           if (value.isEmpty) {
             return _errorText;
+          } else {
+            setState(() {
+              if (_labelText == 'Password') {
+                _password = value;
+              } else {
+                _email = value;
+              }
+            });
           }
           // else{
           //   setState(() {
