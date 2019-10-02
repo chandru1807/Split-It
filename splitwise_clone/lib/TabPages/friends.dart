@@ -19,7 +19,11 @@ class _FriendsTabState extends State<FriendsTab> {
             if (!snapshots.hasData) {
               return Text('Loading');
             } else {
-              return Text(snapshots.data.documents[0]['name']);
+              if (snapshots.data.documents.length > 0) {
+                return Text(snapshots.data.documents[0]['name']);
+              } else {
+                return Text('No friends man!! Get some friends ffs!');
+              }
             }
           }),
     );

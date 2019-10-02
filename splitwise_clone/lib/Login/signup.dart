@@ -58,14 +58,12 @@ class _SignUpState extends State<SignUp> {
                                 .add(_userCred)
                                 .then((value) {})
                                 .catchError((e) => print(e));
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                              HomePage(
-                                uId: signUpUser.uid,
-                              );
-                            }));
+                            //Navigator.of(context).pop();
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                                    builder: (BuildContext context) => HomePage(
+                                          uId: signUpUser.uid,
+                                        )));
                           }).catchError((e) => print(e));
                         }
                       },

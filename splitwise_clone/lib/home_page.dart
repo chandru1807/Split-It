@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './TabPages/friends.dart';
 
@@ -60,42 +61,7 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Text(
-          'SplitWise Clone',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.green[300],
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-            splashColor: Colors.white,
-          )
-        ],
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          indicatorWeight: 2.5,
-          controller: _tabCont,
-          tabs: <Widget>[
-            Tab(
-              child: Text('FRIENDS'),
-            ),
-            Tab(
-              child: Text('GROUPS'),
-            ),
-            Tab(
-              child: Text('ACTIVITY'),
-            )
-          ],
-        ),
-      ),
+      appBar: this._getAppBar(),
       body: TabBarView(
         controller: _tabCont,
         children: <Widget>[
@@ -111,6 +77,57 @@ class _HomePageState extends State<HomePage>
         onPressed: () {},
         backgroundColor: Colors.deepOrange,
         elevation: 2.0,
+      ),
+    );
+  }
+
+  AppBar _getAppBar() {
+    return AppBar(
+      actions: <Widget>[
+        PopupMenuButton(
+          onSelected: (value) {
+            if (value == 'logout') {
+              FirebaseAuth.instance.signOut();
+            } else if (value == 'addFriends') {
+              Navigator.of(context).pushNamed('/addFriends');
+            }
+          },
+          icon: Icon(Icons.more_vert),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'logout',
+              child: Text('Logout'),
+            ),
+            const PopupMenuItem(
+              value: 'addFriends',
+              child: Text('Add Friends'),
+            ),
+          ],
+        )
+      ],
+      title: Text(
+        'SplitWise Clone',
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      backgroundColor: Colors.green[300],
+      centerTitle: true,
+      bottom: TabBar(
+        indicatorColor: Colors.white,
+        indicatorWeight: 2.5,
+        controller: _tabCont,
+        tabs: <Widget>[
+          Tab(
+            child: Text('FRIENDS'),
+          ),
+          Tab(
+            child: Text('GROUPS'),
+          ),
+          Tab(
+            child: Text('ACTIVITY'),
+          )
+        ],
       ),
     );
   }

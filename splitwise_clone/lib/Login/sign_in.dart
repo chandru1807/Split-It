@@ -52,11 +52,8 @@ class SignInFormState extends State<SignInForm> {
                           print(value);
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            HomePage(
-                              uId: value.uid,
-                            );
-                          }));
+                                  builder: (BuildContext context) =>
+                                      HomePage(uId: value.uid)));
                         }).catchError((e) => print(e));
                       }
                     },
