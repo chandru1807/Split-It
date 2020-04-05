@@ -95,7 +95,8 @@ class SignInFormState extends State<SignInForm> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/signUp');
+                      //Navigator.pushReplacementNamed(context, '/signUp');
+                      Navigator.of(context).popAndPushNamed('/signUp');
                     },
                   )
                 ],

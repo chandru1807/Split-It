@@ -6,7 +6,7 @@ import 'home_page.dart';
 import './Login/signup.dart';
 
 void main() => runApp(MaterialApp(
-      home: LoginApp(),
+      home: getUserCurrentPage(),
       routes: <String, WidgetBuilder>{
         '/homePage': (BuildContext context) => HomePage(),
         '/signUp': (BuildContext context) => SignUp(),
@@ -14,26 +14,24 @@ void main() => runApp(MaterialApp(
       },
     ));
 
-class LoginApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.green[300],
-      body: StreamBuilder<Object>(
+
+   StreamBuilder<Object> getUserCurrentPage(){
+     return StreamBuilder<Object>(
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (context, snapshot) {
+            print('in here');
+            print(snapshot.connectionState);
+            print(snapshot);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else {
               if (snapshot.hasData) {
                 return HomePage(
-                  uId: '1abcdgesdas',
+                  uId: 'R2AbqZ17ykZcniEsZM0yCzj7zUh1',
                 );
               } else {
                 return SignInForm();
               }
             }
-          }),
-    );
-  }
-}
+          });
+    }

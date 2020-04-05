@@ -16,7 +16,8 @@ class _SignUpState extends State<SignUp> {
   String _password;
   Map<String, String> _userCred;
 
-  CollectionReference db = Firestore.instance.collection('/userCred');
+  CollectionReference _userCredDb = Firestore.instance.collection('/userCred');
+  CollectionReference _userInfo = Firestore.instance.collection('/userInfo');
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -52,12 +53,20 @@ class _SignUpState extends State<SignUp> {
                               .then((FirebaseUser signUpUser) {
                             _userCred = {
                               'email': signUpUser.email,
-                              'uid': signUpUser.uid
+                              'uid': signUpUser.uid,
+                              'userInfo': 'userCred/${signUpUser.uid}'
                             };
-                            db
-                                .add(_userCred)
-                                .then((value) {})
-                                .catchError((e) => print(e));
+                            
+                            try{
+                              _userCredDb.document(_userCred['uid']).setData(_userCred);
+                              _userInfo.document(_userCred['uid']).setData({
+                                'friends':[],
+                              });
+                            }
+                            catch(e){
+
+                            }
+                            
                             //Navigator.of(context).pop();
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
