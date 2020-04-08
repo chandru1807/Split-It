@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import './TabPages/friends.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   TabController _tabCont;
 
   @override
@@ -19,17 +20,33 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _tabCont = new TabController(vsync: this, length: 3);
     getUserInfo();
+   // WidgetsBinding.instance.addObserver(this);
+    // SchedulerBinding.instance.addPostFrameCallback((val) => {
+    //   print(val)
+    // });
   }
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   super.didChangeAppLifecycleState(state);
+  //   if (state == AppLifecycleState.paused) {
+  //     print('damn it');
+  //   }
+  //   if (state == AppLifecycleState.resumed) {
+  //     print('yay it');
+  //   }
+  // }
 
   getUserInfo() async {
     final user = await FirebaseAuth.instance.currentUser();
-    
+
     print(user);
   }
 
   @override
   void dispose() {
     _tabCont.dispose();
+    //WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
