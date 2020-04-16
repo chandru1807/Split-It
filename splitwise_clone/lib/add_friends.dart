@@ -120,13 +120,8 @@ class _AddFriendsState extends State<AddFriends> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Colors.grey,
-        onPressed: null,
-        elevation: 2.0,
-        child: Icon(Icons.chevron_right),
-        backgroundColor: Colors.blueGrey,
-      ),
+      floatingActionButton:
+          FloatingAddFriends(selectedContacts: selectedContacts),
       body: this.contacts != null
           ? buildContactView(this.contacts)
           : FutureBuilder(
@@ -174,21 +169,42 @@ class _AddFriendsState extends State<AddFriends> {
         var contact = allContacts.elementAt(index);
         return ListTile(
           trailing: IconButton(
-            icon: this.selectedContacts.any((Contact selContact) => selContact.displayName == contact.displayName) ? Icon(Icons.check_circle) : Icon(Icons.add_circle),
+            key: ValueKey('icBtn' + index.toString()),
+            icon: AnimatedSwitcher(
+              key: ValueKey(index),
+              duration: Duration(milliseconds: 500),
+              child: this.selectedContacts.any((Contact selContact) =>
+                      selContact.displayName == contact.displayName)
+                  ? Icon(
+                      Icons.check_circle,
+                      size: 30,
+                      color: Colors.green[300],
+                      key: ValueKey('check' + index.toString()),
+                    )
+                  : Icon(
+                      Icons.add_circle,
+                      size: 30,
+                      color: Colors.blueAccent,
+                      key: ValueKey('add' + index.toString()),
+                    ),
+            ),
             onPressed: () {
-              if(this.selectedContacts.any((Contact selContact) => selContact.displayName == contact.displayName)){
+              if (this.selectedContacts.any((Contact selContact) =>
+                  selContact.displayName == contact.displayName)) {
                 //this.selectedContacts = this.selectedContacts.skipWhile((Contact c) => c.displayName != contact.displayName).toList();
-                this.selectedContacts.removeAt(this.selectedContacts.indexWhere((Contact c) => c.displayName == contact.displayName));
+                this.selectedContacts.removeAt(this.selectedContacts.indexWhere(
+                    (Contact c) => c.displayName == contact.displayName));
                 this.setState(() => {
-                  this.selectedContacts,
-                });
-              }
-              else{
+                      this.selectedContacts,
+                    });
+              } else {
                 this.setState(() => {
-                this.selectedContacts = [...this.selectedContacts,contact],
-              });
+                      this.selectedContacts = [
+                        ...this.selectedContacts,
+                        contact
+                      ],
+                    });
               }
-              
             },
           ),
           leading: contact.avatar.isEmpty
@@ -207,6 +223,47 @@ class _AddFriendsState extends State<AddFriends> {
               : 'No Number'),
         );
       },
+    );
+  }
+}
+
+class FloatingAddFriends extends StatelessWidget {
+  const FloatingAddFriends({
+    Key key,
+    @required this.selectedContacts,
+  }) : super(key: key);
+
+  final List<Contact> selectedContacts;
+  showSnack(BuildContext context) {
+    SnackBar sn = SnackBar(
+      content: Text('Successfully added friends!'),
+    );
+    Scaffold.of(context).showSnackBar(sn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      foregroundColor:
+          this.selectedContacts.isNotEmpty ? Colors.white : Colors.grey,
+      onPressed:
+          this.selectedContacts.isNotEmpty ? () => showSnack(context) : null,
+      elevation: 2.0,
+      child: this.selectedContacts.isNotEmpty
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(this.selectedContacts.length.toString()),
+                Icon(
+                  Icons.chevron_right,
+                ),
+              ],
+            )
+          : Icon(
+              Icons.chevron_right,
+            ),
+      backgroundColor:
+          this.selectedContacts.isNotEmpty ? Colors.orange : Colors.blueGrey,
     );
   }
 }

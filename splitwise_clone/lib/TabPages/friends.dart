@@ -17,7 +17,12 @@ class _FriendsTabState extends State<FriendsTab> {
           stream: db.snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshots) {
             if (!snapshots.hasData) {
-              return Text('Loading');
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.orange[300],
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                ),
+              );
             } else {
               if (snapshots.data.documents.length > 0) {
                 return Text(snapshots.data.documents[0]['name']);

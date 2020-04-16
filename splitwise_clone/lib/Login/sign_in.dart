@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:splitwise_clone/home_page.dart';
+import 'package:flutter/material.dart';
+import 'package:splitwise_clone/Login/signup.dart';
 
 class SignInForm extends StatefulWidget {
   @override
@@ -15,9 +17,15 @@ class SignInFormState extends State<SignInForm> {
   bool _showPassword = false;
   String _email;
   String _password;
+  bool invalidCred = false;
+  bool signIn = true;
   GlobalKey<FormState> _signInKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    return this.signIn ? signInForm(context) : SignUp();
+  }
+
+  Form signInForm(BuildContext context) {
     return Form(
       key: _signInKey,
       child: Container(
@@ -37,6 +45,15 @@ class SignInFormState extends State<SignInForm> {
                       'Enter email', 'Email Id', false, 'Enter valid Email'),
                   usernameAndPassword('Enter password', 'Password',
                       !_showPassword, 'Enter valid password'),
+                  SizedBox(
+                    height: this.invalidCred ? 30 : 0,
+                    child: Text(
+                      'Invalid email or password',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  ),
                   RaisedButton(
                     animationDuration: Duration(milliseconds: 300),
                     highlightColor: Colors.white,
@@ -50,11 +67,16 @@ class SignInFormState extends State<SignInForm> {
                         )
                             .then((FirebaseUser value) {
                           print(value);
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      HomePage(uId: value.uid)));
-                        }).catchError((e) => print(e));
+                          // Navigator.of(context).pushReplacement(
+                          //     MaterialPageRoute(
+                          //         builder: (BuildContext context) =>
+                          //             HomePage(uId: value.uid)));
+                        }).catchError((e) {
+                          this.setState(() {
+                            this.invalidCred = true;
+                          });
+                          return null;
+                        });
                       }
                     },
                     elevation: 2.0,
@@ -96,7 +118,10 @@ class SignInFormState extends State<SignInForm> {
                     ),
                     onPressed: () {
                       //Navigator.pushReplacementNamed(context, '/signUp');
-                      Navigator.of(context).popAndPushNamed('/signUp');
+                      //Navigator.of(context).pushNamed('/signUp');
+                      this.setState(() => {
+                        this.signIn = false
+                      });
                     },
                   )
                 ],

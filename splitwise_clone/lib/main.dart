@@ -30,9 +30,7 @@ Scaffold getUserCurrentPage() {
             return CircularProgressIndicator();
           } else {
             if (snapshot.hasData) {
-              return HomePage(
-                uId: 'R2AbqZ17ykZcniEsZM0yCzj7zUh1',
-              );
+              return HomePage();
             } else {
               return SignInForm();
             }

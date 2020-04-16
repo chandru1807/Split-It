@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+
 import './TabPages/friends.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,13 +14,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   TabController _tabCont;
-
+  CollectionReference _userCredDb = Firestore.instance.collection('/userCred');
   @override
   void initState() {
     super.initState();
     _tabCont = new TabController(vsync: this, length: 3);
     getUserInfo();
-   // WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
     // SchedulerBinding.instance.addPostFrameCallback((val) => {
     //   print(val)
     // });
@@ -39,8 +39,16 @@ class _HomePageState extends State<HomePage>
 
   getUserInfo() async {
     final user = await FirebaseAuth.instance.currentUser();
-
     print(user);
+    this._userCredDb.document(user.uid).get().then((DocumentSnapshot cred) {
+      print('usercred below');
+      print(cred.data);
+      DocumentReference doc = cred.data['userInfo'];
+      doc.get().then((DocumentSnapshot info) {
+        print('userIfno below');
+        print(info.data);
+      });
+    });
   }
 
   @override

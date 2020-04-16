@@ -14,7 +14,7 @@ class _SignUpState extends State<SignUp> {
   GlobalKey<FormState> _signInKey = GlobalKey<FormState>();
   String _email;
   String _password;
-  Map<String, String> _userCred;
+  Map<String, dynamic> _userCred;
 
   CollectionReference _userCredDb = Firestore.instance.collection('/userCred');
   CollectionReference _userInfo = Firestore.instance.collection('/userInfo');
@@ -54,25 +54,32 @@ class _SignUpState extends State<SignUp> {
                             _userCred = {
                               'email': signUpUser.email,
                               'uid': signUpUser.uid,
-                              'userInfo': 'userCred/${signUpUser.uid}'
                             };
-                            
-                            try{
-                              _userCredDb.document(_userCred['uid']).setData(_userCred);
-                              _userInfo.document(_userCred['uid']).setData({
-                                'friends':[],
-                              });
-                            }
-                            catch(e){
 
-                            }
-                            
+                            try {
+                              DocumentReference infoDoc =
+                                  _userInfo.document(_userCred['uid']);
+                              infoDoc.setData({
+                                'friends': [],
+                              }).then((_) {
+                                _userCred['userInfo'] = infoDoc;
+                                _userCredDb
+                                    .document(_userCred['uid'])
+                                    .setData(_userCred)
+                                    .then((_) {
+                                  // Navigator.of(context).pushReplacement(
+                                  //     MaterialPageRoute(
+                                  //         builder: (BuildContext context) =>
+                                  //             HomePage(
+                                  //               uId: signUpUser.uid,
+                                  //             )));
+                                  print('done here');
+                                  
+                                });
+                              });
+                            } catch (e) {}
+
                             //Navigator.of(context).pop();
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                                    builder: (BuildContext context) => HomePage(
-                                          uId: signUpUser.uid,
-                                        )));
                           }).catchError((e) => print(e));
                         }
                       },
