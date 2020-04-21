@@ -1,4 +1,4 @@
-# splitwise_clone
+# split-it
 
 A new Flutter project.
 
